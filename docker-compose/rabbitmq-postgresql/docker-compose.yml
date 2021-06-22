@@ -18,3 +18,4 @@ services:
       POSTGRES_PASSWORD: 1111
     volumes:
       - '~/env/docker/postgres/volumes/local-postgres:/var/lib/postgresql/data'
+      - './dump:/docker-entrypoint-initdb.d'
