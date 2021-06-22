@@ -21,7 +21,7 @@ apachectl -DFOREGROUND
 
 위의 docker container 명령어를 docker compose 로 표현해보면 아래와 같다.<br>
 
-에디터는 https://onlineyamltools.com/edit-yaml 을 사용했다.<br>
+에디터는 [https://onlineyamltools.com/edit-yaml](https://onlineyamltools.com/edit-yaml) 을 사용했다.<br>
 
 ```yaml
 version: '3.0'
@@ -115,7 +115,7 @@ docker-compose.yaml 에 기술하는 각 항목, 옵션들은 docker container �
 
 <br>
 
-**version**<br>
+### version
 
 yaml 파일 버전 은  1, 2, 2.1, 3 이 있다. 도커 컴포즈 버전 1.10 부터는 버전 3을 사용한다. 엄청 오랫동안 도커를 업데이트하지 않은 이상은 아마 대부분의 도커 버전에서는 버전 3을 사용할 것 같다. 버전 3는 도커 스웜모드와 호환되는 버전이다. 
 
@@ -127,7 +127,7 @@ version: '3.0'
 
 <br>
 
-**services**<br>
+### services.[컨테이너명]
 
 도커 컴포즈로 생성할 컨테이너의 옵션을 정의한다. services 항목에 쓰인 서비스는 컨테이너로 구현된다. 그리고 하나의 프로젝트로 도커 컴포즈에 의해 관리된다.
 
@@ -141,7 +141,7 @@ services:
 
 <br>
 
-**services.[컨테이너명].image**<br>
+### services.[컨테이너명].image
 
 컨테이너 생성시 사용할 도커 이미지의 이름을 설정한다. 현재 디렉터리에 Dockerfile 이 없을 경우 docker hub 에서 자동으로 이미지를 pull 해온다. 
 
@@ -153,7 +153,7 @@ services:
 
 <br>
 
-**services.[컨테이너명].links**<br>
+### services.[컨테이너명].links
 
 docker run 명령어에 사용하는 --link 옵션과 같은 역할을 한다. 다른 서비스에 서비스명 만으로 접근할 수 있도록 정의한다. [SERVICE:ALIAS] 의 형식을 사용하면 서비스에 별칭으로도 접근할 수 있다.
 
@@ -168,7 +168,7 @@ services:
 
 <br>
 
-**services.[컨테이너명].environment**<br>
+### services.[컨테이너명].environment
 
 docker run 명령어의 -env, -e 와 같은 역할을 하는 옵션이다. 딕셔너리 또는 배열 형태를 모두 사용가능하다.
 
@@ -186,7 +186,7 @@ services:
 
 <br>
 
-**services.[컨테이너명].command**<br>
+### services.[컨테이너명].command
 
 컨테이너가 실행될 때 실행할 커맨드(명령어)를 지정하는 옵션이다.<br>
 
@@ -207,7 +207,7 @@ services:
 
 <br>
 
-**services.[컨테이너명].depends_on**<br>
+### services.[컨테이너명].depends_on
 
 특정 컨테이너에 대한 의존관계를 depends_on 필드에 명시한다.<br>
 
@@ -266,7 +266,7 @@ echo "depends_on container ready"
 
 <br>
 
-**ports**<br>
+### services.[컨테이너명].images.ports
 
 docker container run 명령어에서의 -p 옵션과 같은 역할을 한다. 단일 호스트 환경에서 80:80 과 같은 호스트의 포트를 컨테이너의 포트로 연결할 때 ㅇocker-compose scale aㅕㅇ령어로 서비스 컨테이너의 수를 늘리는 것은 불가능하다.<br>
 
@@ -283,19 +283,15 @@ services:
 
 <br>
 
-**build**<br>
+### services.[컨테이너명].build
 
-도커 파일에서 이미지를 빌드해서 서비스의 컨테이너를 생성하도록 설정<br>
-
-아래 예제는 ./composetest 디렉터리 내의 도커파일로 이미지를 빌드해 컨테이너를 생성한다.<br>
-
-새로 빌드될 이미지의 이름은 image 항목에 정의된 이름인 alice106/composetest:web 이 된다.<br>
+도커파일의 위치를 지정하려 할때 `services.[컨테이너명].build` 옵션 항목에 적용하기를 원하는 Dockerfile 의 위치를 명시해주면 된다. 또는 예를 들어 Dockerfile의 이름이 `Dockerfile_20110622` 와 같은 특수한 이름으로 지정했을 경우는 도커파일의 이름의 경로를 명시한  `./composetest/Dockerfile_20110622` 를 적어주면 된다. 
 
 ```yaml
 services:
   web:
     build: ./composetest
-    image: alicek106/composetest:web
+    image: gosgjung/composetest:web
 ```
 
 <br>
@@ -377,6 +373,153 @@ version: '3.0'
 참고로 depends_on, links, volumes_from 옵션은 컨테이너 간의 의존성이 있어서 extends 로 상속받는 것은 불가능하다.<br>
 
 (도커컴포즈의 일부 버전에서는 extends 가 동작하지 않는ㄴ다. 이것을 해결하려면 최신 버전의 도커컴포즈를 사용하거나 version 항목을 3.0 이 아닌 2.x 로 내려 사용해야 한다.)<br>
+
+<br>
+
+## docker-compose 네트워크
+
+도커 컴포즈의 기본 네트워크 설정 옵션을 커스터마이징 할 때 `networks.[원하는 옵션]...` 을 수정해서 커스터마이징한다.<br>
+
+주로 수정하게 되는 옵션은 아래의 세가지 이다.
+
+- driver
+  - `networks.[네트워크명].driver` 
+  - 도커컴포즈의 기본 네트워크 옵션은 브릿지타입이다.
+  - 이것을 수정하려 할때 driver를 사용한다.
+- ipam
+  - `networks.ipam.[driver,config...]` 
+  - IP And Manager 를 위해 사용하게 되는 옵션이다.
+  - subnet, ip 범위를 설정할 수 있다.
+  - ipam 을 지원하기 위해 사용하기로 한 드라이버의 이름을 `networks.ipam` 에 대한 값으로 입력해주면 된다.
+- external
+  - networks.[네트워크명].external 에 true/false 의 값을 입력해준다.
+
+<br>
+
+예제 1) overlay 타입의 커스텀 네트워크 'mynetwork' 를 생성해서 nginx의 network 로 지정<br>
+
+```yaml
+version: '3.0'
+services: 
+  myservice:
+    image: nginx
+    networks:
+    - mynetwork
+networks:
+  mynetwork:
+    driver: overlay
+    driver_opts:
+      subnet: "255.255.255.0"
+      IPAdress: "10.0.0.2"
+```
+
+<br>
+
+예제 2) IPAM 네트워크를 사용하도록 지정하기<br>
+
+`networks.ipam.[...]` 을 정의하자.
+
+```yaml
+services:
+  ...
+  
+networks:
+  ipam:
+    driver: mydriver
+    config:
+      subnet: 172.20.0.0/16
+      ip_range: 172.20.5.0/24
+      gateway: 172.20.5.1
+```
+
+<br>
+
+예제 3) 'gosgjung_external' 을 외부 네트워크로 선언해서 gosgjung/composetest:web 의 네트워크로 사용하기<br>
+
+```yaml
+services:
+  web:
+    image: gosgjung/composetest:web
+    networks:
+      - gosgjung_external
+networks:
+  gosgjung_external:
+    external: true
+```
+
+<br>
+
+## docker-compose 볼륨
+
+로컬 디스크 내의 파일 시스템에서 원하는 디렉터리의 위치를 구동할 도커 컨테이너의 특정 디렉터리에 마운트하는 것이 가능하다. 보통 이것을 volume 이라는 항목에 지정해준다. Docker container 명령어에서도 사용되는 명령어 옵션이다.<br>TODO ::설명을 좀더 명확하게 정리해야 한다.<br>
+
+- `volumes.driver` 
+  - 볼륨을 생성할 때 사용할 드라이버를 지정한다.
+  - `volumes.driver`를 명시하지 않으면 도커 컴포즈 내장 기본 옵션인 `local`로 지정된다.
+  - 드라이버를 사용하기 위한 추가 옵션은 하위 항목인  driver_opts 를 통해 인자로 설정할 수 있다.
+
+- `volumes.[볼륨명].external`
+  - volume, volumes-from 옵션을 yaml 파일에서 사용하면 프로젝트마다 볼륨을 사용할 수 있다.
+  - 이때 external 옵션을 주어서 true 로 설정하면 매번 볼륨을 새로 생성하는 것이 아니라 기존 볼륨을 사용하게 된다.
+
+<br>
+
+예제 1) volumes.driver 예제. flocker 라는 드라이버를 사용한다.<br>
+
+```yaml
+version: '3.0'
+services:
+  web:
+    image: ngnix
+
+volumes:
+  driver: flocker
+    driver_opts:
+      opt: "1"
+      opt2: 2
+```
+
+<br>
+
+예제 2) volumes.[볼륨명].external<br>
+
+- volume, volumes-from 옵션을 yaml 파일에서 사용하면 프로젝트마다 볼륨을 사용할 수 있다.
+- 이때 external 옵션을 주어서 true 로 설정하면 매번 볼륨을 새로 생성하는 것이 아니라 기존 볼륨을 사용하게 된다.
+
+```yaml
+services:
+  web:
+    image: gosgjung/composetest:web
+    volumes:
+      - myvolume:/var/www/html
+volumes:
+  myvolume:
+    external: true
+```
+
+<br>
+
+## yaml 파일 검증하기
+
+YAML 의 오타, 파일포맷 적절한지 등을 체크할 때 docker-compose config 명령어를 사용한다.<br>
+
+기본적으로 현재 디렉터리의 docker-compose.yml 파일을 검사하고, docker-compose -f 파일경로 config 명령으로 검사할 파일의 경로를 명시적으로 지정하는 것 역시 가능하다.
+
+```bash
+$ docker-compose -f ./images/mysql-rabbitmq/docker-compose.yml config
+```
+
+<br>
+
+
+
+
+
+
+
+
+
+
 
 
 
